@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>植感生活 - 全台素食餐廳資訊平台</title>
+<meta name="description" content="植感生活，全台最完整素食餐廳資訊平台，提供素食、蔬食、純素餐廳搜尋，讓你輕鬆找到附近的素食好店。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #3a7d44;
+    --green-light: #52a85f;
+    --green-pale: #e8f5e9;
+    --green-mid: #c8e6c9;
+    --orange: #f4a623;
+    --orange-light: #ffd180;
+    --text-dark: #1a2e1a;
+    --text-mid: #4a5e4a;
+    --text-light: #7a8e7a;
+    --bg: #f9fcf9;
+    --white: #ffffff;
+    --shadow: 0 2px 16px rgba(58,125,68,0.10);
+    --radius: 14px;
+    --line-green: #06c755;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: var(--text-dark); }
+  a { text-decoration: none; color: inherit; }
+
+  /* ===== NAVBAR ===== */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--white);
+    border-bottom: 2px solid var(--green-mid);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px; height: 64px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 1.35rem; font-weight: 700; color: var(--green);
+  }
+  .nav-logo .leaf { font-size: 1.6rem; }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a {
+    font-size: 0.95rem; font-weight: 500; color: var(--text-mid);
+    padding: 6px 4px; border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .nav-links a:hover { color: var(--green); border-color: var(--green); }
+  .nav-line-btn {
+    background: var(--line-green); color: white !important;
+    padding: 8px 20px !important; border-radius: 24px !important;
+    border-bottom: none !important; font-weight: 700 !important;
+    display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 2px 8px rgba(6,199,85,0.3);
+    transition: transform 0.15s, box-shadow 0.15s !important;
+  }
+  .nav-line-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(6,199,85,0.4) !important; }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 40%, #43a047 80%, #66bb6a 100%);
+    padding: 72px 32px 80px;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '🌿🥦🥕🍃🌱🥬🫑🌾';
+    position: absolute; top: 12px; left: 0; right: 0;
+    font-size: 1.8rem; letter-spacing: 28px; opacity: 0.18;
+    white-space: nowrap; overflow: hidden;
+  }
+  .hero-badge {
+    display: inline-block; background: rgba(255,255,255,0.18);
+    color: #d4efda; font-size: 0.82rem; font-weight: 500;
+    padding: 4px 16px; border-radius: 20px; margin-bottom: 18px;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .hero h1 {
+    font-size: 2.6rem; font-weight: 700; color: white;
+    line-height: 1.25; margin-bottom: 14px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .hero h1 span { color: #a5d6a7; }
+  .hero p { font-size: 1.1rem; color: #c8e6c9; margin-bottom: 36px; }
+
+  /* Search bar */
+  .search-wrap {
+    max-width: 680px; margin: 0 auto 28px;
+    display: flex; gap: 0; background: white;
+    border-radius: 50px; overflow: hidden;
+    box-shadow: 0 6px 32px rgba(0,0,0,0.18);
+  }
+  .search-wrap input {
+    flex: 1; padding: 16px 24px; font-size: 1rem;
+    border: none; outline: none; font-family: inherit;
+    color: var(--text-dark);
+  }
+  .search-wrap select {
+    padding: 16px 12px; border: none; border-left: 1px solid #e0e0e0;
+    font-size: 0.9rem; color: var(--text-mid); outline: none;
+    background: white; font-family: inherit; cursor: pointer;
+  }
+  .search-btn {
+    background: var(--green); color: white;
+    border: none; padding: 0 28px; font-size: 1rem;
+    font-weight: 700; cursor: pointer; font-family: inherit;
+    transition: background 0.2s;
+  }
+  .search-btn:hover { background: var(--green-light); }
+
+  /* Hero stats */
+  .hero-stats {
+    display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-size: 1.8rem; font-weight: 700; color: #a5d6a7; }
+  .stat-label { font-size: 0.82rem; color: #c8e6c9; margin-top: 2px; }
+
+  /* ===== CITY FILTER ===== */
+  .city-section { background: var(--white); padding: 28px 32px; border-bottom: 1px solid var(--green-mid); }
+  .city-section h2 { font-size: 1rem; color: var(--text-light); margin-bottom: 14px; font-weight: 500; }
+  .city-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+  .city-tag {
+    padding: 7px 18px; border-radius: 24px;
+    background: var(--green-pale); color: var(--green);
+    font-size: 0.9rem; font-weight: 500; cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.18s;
+  }
+  .city-tag:hover, .city-tag.active {
+    background: var(--green); color: white;
+    border-color: var(--green);
+  }
+
+  /* ===== CATEGORY FILTER ===== */
+  .cat-section { background: var(--bg); padding: 24px 32px; }
+  .cat-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+  .cat-card {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 6px; padding: 14px 20px; background: white;
+    border-radius: var(--radius); cursor: pointer;
+    border: 2px solid transparent;
+    box-shadow: var(--shadow); min-width: 88px;
+    transition: all 0.18s;
+  }
+  .cat-card:hover, .cat-card.active {
+    border-color: var(--green); background: var(--green-pale);
+  }
+  .cat-card .icon { font-size: 1.7rem; }
+  .cat-card .label { font-size: 0.8rem; color: var(--text-mid); font-weight: 500; }
+
+  /* ===== SECTION TITLE ===== */
+  .section { padding: 40px 32px; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .section-title { font-size: 1.4rem; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
+  .section-title .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; }
+  .view-all { font-size: 0.9rem; color: var(--green); font-weight: 500; }
+  .view-all:hover { text-decoration: underline; }
+
+  /* ===== RESTAURANT CARDS ===== */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+  .restaurant-card {
+    background: white; border-radius: var(--radius);
+    overflow: hidden; box-shadow: var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer; border: 1.5px solid transparent;
+  }
+  .restaurant-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(58,125,68,0.18);
+    border-color: var(--green-mid);
+  }
+  .card-img {
+    width: 100%; height: 180px; object-fit: cover;
+    background: linear-gradient(135deg, var(--green-pale), var(--green-mid));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem; position: relative; overflow: hidden;
+  }
+  .card-img .badge {
+    position: absolute; top: 10px; left: 10px;
+    background: var(--green); color: white;
+    font-size: 0.72rem; padding: 3px 10px; border-radius: 12px;
+    font-weight: 600;
+  }
+  .card-img .badge-orange {
+    background: var(--orange);
+  }
+  .card-img .badge-vegan {
+    background: #7b1fa2;
+  }
+  .card-body { padding: 16px; }
+  .card-name { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; color: var(--text-dark); }
+  .card-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .card-tag {
+    font-size: 0.75rem; padding: 2px 10px; border-radius: 12px;
+    background: var(--green-pale); color: var(--green); font-weight: 500;
+  }
+  .card-info { font-size: 0.83rem; color: var(--text-light); margin-bottom: 12px; line-height: 1.6; }
+  .card-info span { margin-right: 12px; }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; }
+  .card-rating { display: flex; align-items: center; gap: 4px; font-size: 0.88rem; font-weight: 600; color: var(--orange); }
+  .card-line-btn {
+    background: var(--line-green); color: white;
+    padding: 7px 16px; border-radius: 20px;
+    font-size: 0.82rem; font-weight: 700;
+    display: flex; align-items: center; gap: 5px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 2px 8px rgba(6,199,85,0.25);
+  }
+  .card-line-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(6,199,85,0.4); }
+
+  /* ===== MAP SECTION ===== */
+  .map-section {
+    margin: 0 32px 40px;
+    background: white; border-radius: var(--radius);
+    box-shadow: var(--shadow); overflow: hidden;
+    border: 1.5px solid var(--green-mid);
+  }
+  .map-header {
+    background: var(--green); color: white;
+    padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .map-header h3 { font-size: 1.05rem; font-weight: 700; }
+  .map-placeholder {
+    height: 280px; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; font-size: 1rem; color: var(--text-mid);
+  }
+  .map-placeholder .map-icon { font-size: 3rem; }
+  .map-cta {
+    background: var(--line-green); color: white;
+    padding: 10px 28px; border-radius: 24px; font-weight: 700;
+    font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;
+    box-shadow: 0 2px 12px rgba(6,199,85,0.3);
+    transition: transform 0.15s;
+  }
+  .map-cta:hover { transform: translateY(-2px); }
+
+  /* ===== ARTICLE / BLOG SECTION ===== */
+  .article-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+  .article-card {
+    background: white; border-radius: var(--radius);
+    overflow: hidden; box-shadow: var(--shadow);
+    transition: transform 0.2s;
+  }
+  .article-card:hover { transform: translateY(-3px); }
+  .article-img {
+    height: 160px; background: linear-gradient(135deg, #e8f5e9, #a5d6a7);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+  }
+  .article-body { padding: 16px; }
+  .article-cat { font-size: 0.75rem; color: var(--green); font-weight: 600; margin-bottom: 6px; }
+  .article-title { font-size: 0.98rem; font-weight: 700; margin-bottom: 8px; line-height: 1.5; }
+  .article-desc { font-size: 0.82rem; color: var(--text-light); line-height: 1.6; margin-bottom: 12px; }
+  .article-link {
+    font-size: 0.82rem; color: var(--line-green); font-weight: 600;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  /* ===== LINE BANNER ===== */
+  .line-banner {
+    margin: 0 32px 40px;
+    background: linear-gradient(135deg, #06c755 0%, #00a040 100%);
+    border-radius: var(--radius); padding: 36px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 24px;
+    box-shadow: 0 4px 24px rgba(6,199,85,0.3);
+  }
+  .line-banner-text h2 { font-size: 1.5rem; font-weight: 700; color: white; margin-bottom: 8px; }
+  .line-banner-text p { font-size: 0.95rem; color: rgba(255,255,255,0.85); line-height: 1.6; }
+  .line-banner-btn {
+    background: white; color: #06c755;
+    padding: 14px 36px; border-radius: 32px;
+    font-size: 1.05rem; font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    transition: transform 0.15s, box-shadow 0.15s;
+    white-space: nowrap;
+  }
+  .line-banner-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+  .line-icon { font-size: 1.3rem; }
+
+  /* ===== NEARBY SECTION ===== */
+  .nearby-list { display: flex; flex-direction: column; gap: 14px; }
+  .nearby-item {
+    background: white; border-radius: var(--radius);
+    padding: 16px 20px; display: flex; align-items: center; gap: 16px;
+    box-shadow: var(--shadow); border: 1.5px solid transparent;
+    transition: all 0.18s; cursor: pointer;
+  }
+  .nearby-item:hover { border-color: var(--green-mid); transform: translateX(4px); }
+  .nearby-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--green-pale); color: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; flex-shrink: 0;
+  }
+  .nearby-info { flex: 1; }
+  .nearby-name { font-weight: 700; font-size: 0.98rem; margin-bottom: 3px; }
+  .nearby-sub { font-size: 0.8rem; color: var(--text-light); }
+  .nearby-action { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  .nearby-dist { font-size: 0.8rem; color: var(--text-light); }
+  .nearby-line {
+    background: var(--line-green); color: white;
+    padding: 5px 14px; border-radius: 16px; font-size: 0.78rem; font-weight: 700;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--text-dark); color: #a5d6a7;
+    padding: 48px 32px 32px;
+  }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+  .footer-brand .logo { font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 12px; }
+  .footer-brand p { font-size: 0.85rem; line-height: 1.7; color: #81c784; }
+  .footer-col h4 { font-size: 0.92rem; font-weight: 700; color: white; margin-bottom: 14px; }
+  .footer-col a { display: block; font-size: 0.83rem; color: #81c784; margin-bottom: 8px; transition: color 0.15s; }
+  .footer-col a:hover { color: #a5d6a7; }
+  .footer-line-wrap { margin-top: 16px; }
+  .footer-line-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--line-green); color: white;
+    padding: 10px 24px; border-radius: 24px; font-weight: 700; font-size: 0.9rem;
+    box-shadow: 0 2px 12px rgba(6,199,85,0.3);
+    transition: transform 0.15s;
+  }
+  .footer-line-btn:hover { transform: translateY(-2px); }
+  .footer-bottom {
+    border-top: 1px solid #2e4a2e; padding-top: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.8rem; color: #4a6e4a; flex-wrap: wrap; gap: 12px;
+  }
+
+  /* ===== FLOATING LINE BTN ===== */
+  .float-line {
+    position: fixed; bottom: 28px; right: 28px; z-index: 999;
+    background: var(--line-green); color: white;
+    width: 60px; height: 60px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; box-shadow: 0 4px 20px rgba(6,199,85,0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: pulse 2.5s infinite;
+  }
+  .float-line:hover { transform: scale(1.12); box-shadow: 0 6px 28px rgba(6,199,85,0.65); }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 4px 20px rgba(6,199,85,0.5); }
+    50% { box-shadow: 0 4px 32px rgba(6,199,85,0.75), 0 0 0 8px rgba(6,199,85,0.12); }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    nav { padding: 0 16px; }
+    .nav-links { gap: 12px; }
+    .nav-links a:not(.nav-line-btn) { display: none; }
+    .hero { padding: 48px 16px 56px; }
+    .hero h1 { font-size: 1.8rem; }
+    .search-wrap { flex-wrap: wrap; border-radius: 16px; }
+    .search-wrap select { border-left: none; border-top: 1px solid #e0e0e0; }
+    .search-btn { width: 100%; padding: 14px; border-radius: 0 0 16px 16px; }
+    .city-section, .cat-section, .section { padding: 20px 16px; }
+    .map-section, .line-banner { margin: 0 16px 28px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .hero-stats { gap: 24px; }
+    .line-banner { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- FLOATING LINE BUTTON -->
+<a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="float-line" title="加入植感生活LINE">💬</a>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-logo">
+    <span class="leaf">🌿</span>
+    <span>植感生活</span>
+  </div>
+  <div class="nav-links">
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">素食餐廳</a>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">地圖找餐廳</a>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">素食食譜</a>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">植物性飲食</a>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">活動資訊</a>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="nav-line-btn">
+      <span>💬</span> 加入LINE社群
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🌱 全台最大素食社群平台</div>
+  <h1>找素食餐廳，就上<span>植感生活</span></h1>
+  <p>收錄全台 3,000+ 家素食、蔬食、純素餐廳，讓你隨時找到好吃的素食料理</p>
+
+  <div class="search-wrap">
+    <input type="text" placeholder="搜尋餐廳名稱、料理類型、地址…">
+    <select>
+      <option>全台灣</option>
+      <option>台北市</option>
+      <option>新北市</option>
+      <option>桃園市</option>
+      <option>台中市</option>
+      <option>台南市</option>
+      <option>高雄市</option>
+    </select>
+    <button class="search-btn" onclick="window.open('https://line.me/ti/p/Zc-3X5mbYE','_blank')">🔍 搜尋</button>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">3,200+</div><div class="stat-label">收錄餐廳</div></div>
+    <div class="stat"><div class="stat-num">22</div><div class="stat-label">縣市覆蓋</div></div>
+    <div class="stat"><div class="stat-num">50,000+</div><div class="stat-label">社群成員</div></div>
+    <div class="stat"><div class="stat-num">每日更新</div><div class="stat-label">最新資訊</div></div>
+  </div>
+</section>
+
+<!-- CITY FILTER -->
+<div class="city-section">
+  <h2>📍 依縣市找餐廳</h2>
+  <div class="city-tags">
+    <span class="city-tag active" onclick="goLine()">全部</span>
+    <span class="city-tag" onclick="goLine()">台北市</span>
+    <span class="city-tag" onclick="goLine()">新北市</span>
+    <span class="city-tag" onclick="goLine()">基隆市</span>
+    <span class="city-tag" onclick="goLine()">桃園市</span>
+    <span class="city-tag" onclick="goLine()">新竹市</span>
+    <span class="city-tag" onclick="goLine()">新竹縣</span>
+    <span class="city-tag" onclick="goLine()">苗栗縣</span>
+    <span class="city-tag" onclick="goLine()">台中市</span>
+    <span class="city-tag" onclick="goLine()">彰化縣</span>
+    <span class="city-tag" onclick="goLine()">南投縣</span>
+    <span class="city-tag" onclick="goLine()">雲林縣</span>
+    <span class="city-tag" onclick="goLine()">嘉義市</span>
+    <span class="city-tag" onclick="goLine()">嘉義縣</span>
+    <span class="city-tag" onclick="goLine()">台南市</span>
+    <span class="city-tag" onclick="goLine()">高雄市</span>
+    <span class="city-tag" onclick="goLine()">屏東縣</span>
+    <span class="city-tag" onclick="goLine()">宜蘭縣</span>
+    <span class="city-tag" onclick="goLine()">花蓮縣</span>
+    <span class="city-tag" onclick="goLine()">台東縣</span>
+    <span class="city-tag" onclick="goLine()">澎湖縣</span>
+    <span class="city-tag" onclick="goLine()">金門縣</span>
+  </div>
+</div>
+
+<!-- CATEGORY FILTER -->
+<div class="cat-section">
+  <div class="cat-grid">
+    <div class="cat-card active" onclick="goLine()"><div class="icon">🥗</div><div class="label">全素</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">🌿</div><div class="label">蛋奶素</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">🐄</div><div class="label">奶素</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">🥚</div><div class="label">蛋素</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">☯️</div><div class="label">鍋邊素</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">🍜</div><div class="label">麵食</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">🍱</div><div class="label">便當</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">🥘</div><div class="label">火鍋</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">🍣</div><div class="label">日式</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">🥙</div><div class="label">西式</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">🫕</div><div class="label">中式</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">☕</div><div class="label">咖啡甜點</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">🥤</div><div class="label">飲料</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">🍞</div><div class="label">烘焙</div></div>
+    <div class="cat-card" onclick="goLine()"><div class="icon">🛒</div><div class="label">素食超市</div></div>
+  </div>
+</div>
+
+<!-- FEATURED RESTAURANTS -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-title"><div class="dot"></div>精選素食餐廳</div>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="view-all">查看全部 →</a>
+  </div>
+  <div class="card-grid">
+
+    <div class="restaurant-card" onclick="goLine()">
+      <div class="card-img">
+        🥗
+        <div class="badge">全素</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">綠野仙蹤蔬食餐廳</div>
+        <div class="card-meta">
+          <span class="card-tag">蔬食料理</span>
+          <span class="card-tag">台北市</span>
+        </div>
+        <div class="card-info">
+          <span>📍 大安區復興南路</span><br>
+          <span>🕐 11:00–21:00</span>
+          <span>💰 $150–300</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.8 (236則)</div>
+          <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="card-line-btn" onclick="event.stopPropagation()">💬 加入LINE</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="restaurant-card" onclick="goLine()">
+      <div class="card-img" style="background:linear-gradient(135deg,#fff8e1,#ffe082)">
+        🍜
+        <div class="badge badge-orange">蛋奶素</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">禪味素食麵館</div>
+        <div class="card-meta">
+          <span class="card-tag">麵食</span>
+          <span class="card-tag">台中市</span>
+        </div>
+        <div class="card-info">
+          <span>📍 西區民權路</span><br>
+          <span>🕐 08:00–20:00</span>
+          <span>💰 $80–180</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.6 (189則)</div>
+          <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="card-line-btn" onclick="event.stopPropagation()">💬 加入LINE</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="restaurant-card" onclick="goLine()">
+      <div class="card-img" style="background:linear-gradient(135deg,#f3e5f5,#ce93d8)">
+        🍱
+        <div class="badge badge-vegan">純素Vegan</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">植物星球 Vegan Kitchen</div>
+        <div class="card-meta">
+          <span class="card-tag">西式創意</span>
+          <span class="card-tag">高雄市</span>
+        </div>
+        <div class="card-info">
+          <span>📍 苓雅區中正一路</span><br>
+          <span>🕐 11:30–21:30</span>
+          <span>💰 $200–450</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.9 (312則)</div>
+          <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="card-line-btn" onclick="event.stopPropagation()">💬 加入LINE</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="restaurant-card" onclick="goLine()">
+      <div class="card-img" style="background:linear-gradient(135deg,#e0f2f1,#80cbc4)">
+        ☕
+        <div class="badge">蛋奶素</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">一葉咖啡 × 蔬食輕食</div>
+        <div class="card-meta">
+          <span class="card-tag">咖啡甜點</span>
+          <span class="card-tag">台南市</span>
+        </div>
+        <div class="card-info">
+          <span>📍 東區崇明路</span><br>
+          <span>🕐 09:00–18:00</span>
+          <span>💰 $120–280</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.7 (145則)</div>
+          <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="card-line-btn" onclick="event.stopPropagation()">💬 加入LINE</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="restaurant-card" onclick="goLine()">
+      <div class="card-img" style="background:linear-gradient(135deg,#fce4ec,#f48fb1)">
+        🥘
+        <div class="badge badge-orange">全素</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">慈心素食火鍋</div>
+        <div class="card-meta">
+          <span class="card-tag">火鍋</span>
+          <span class="card-tag">新北市</span>
+        </div>
+        <div class="card-info">
+          <span>📍 板橋區文化路</span><br>
+          <span>🕐 11:00–22:00</span>
+          <span>💰 $350–600</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.5 (278則)</div>
+          <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="card-line-btn" onclick="event.stopPropagation()">💬 加入LINE</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="restaurant-card" onclick="goLine()">
+      <div class="card-img" style="background:linear-gradient(135deg,#e8eaf6,#9fa8da)">
+        🍣
+        <div class="badge badge-vegan">純素Vegan</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">素之道日式料理</div>
+        <div class="card-meta">
+          <span class="card-tag">日式</span>
+          <span class="card-tag">桃園市</span>
+        </div>
+        <div class="card-info">
+          <span>📍 中壢區中山路</span><br>
+          <span>🕐 11:30–20:30</span>
+          <span>💰 $250–500</span>
+        </div>
+        <div class="card-footer">
+          <div class="card-rating">⭐ 4.7 (201則)</div>
+          <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="card-line-btn" onclick="event.stopPropagation()">💬 加入LINE</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- MAP SECTION -->
+<div class="map-section">
+  <div class="map-header">
+    <h3>🗺️ 地圖找附近素食餐廳</h3>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" style="color:white;font-size:0.85rem;font-weight:600;">加入LINE獲得更多 →</a>
+  </div>
+  <div class="map-placeholder">
+    <div class="map-icon">🗺️</div>
+    <div style="font-weight:600;color:var(--text-dark)">開啟地圖，找你附近的素食餐廳</div>
+    <div style="font-size:0.85rem">加入「植感生活」LINE社群，即可取得完整地圖功能與最新餐廳資訊</div>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="map-cta">💬 加入LINE社群，開啟地圖</a>
+  </div>
+</div>
+
+<!-- NEARBY RESTAURANTS -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-title"><div class="dot"></div>📍 各地熱門素食</div>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="view-all">查看更多 →</a>
+  </div>
+  <div class="nearby-list">
+    <div class="nearby-item" onclick="goLine()">
+      <div class="nearby-num">1</div>
+      <div class="nearby-info">
+        <div class="nearby-name">🌿 台北 · 中山區素食便當</div>
+        <div class="nearby-sub">全素 ｜ 便當 ｜ 台北市中山區</div>
+      </div>
+      <div class="nearby-action">
+        <div class="nearby-dist">⭐ 4.8</div>
+        <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="nearby-line" onclick="event.stopPropagation()">💬 LINE</a>
+      </div>
+    </div>
+    <div class="nearby-item" onclick="goLine()">
+      <div class="nearby-num">2</div>
+      <div class="nearby-info">
+        <div class="nearby-name">🥦 台中 · 西區蔬食創意料理</div>
+        <div class="nearby-sub">蛋奶素 ｜ 創意料理 ｜ 台中市西區</div>
+      </div>
+      <div class="nearby-action">
+        <div class="nearby-dist">⭐ 4.7</div>
+        <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="nearby-line" onclick="event.stopPropagation()">💬 LINE</a>
+      </div>
+    </div>
+    <div class="nearby-item" onclick="goLine()">
+      <div class="nearby-num">3</div>
+      <div class="nearby-info">
+        <div class="nearby-name">🍃 高雄 · 前金區純素餐廳</div>
+        <div class="nearby-sub">純素Vegan ｜ 西式 ｜ 高雄市前金區</div>
+      </div>
+      <div class="nearby-action">
+        <div class="nearby-dist">⭐ 4.9</div>
+        <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="nearby-line" onclick="event.stopPropagation()">💬 LINE</a>
+      </div>
+    </div>
+    <div class="nearby-item" onclick="goLine()">
+      <div class="nearby-num">4</div>
+      <div class="nearby-info">
+        <div class="nearby-name">🌾 台南 · 東區素食早午餐</div>
+        <div class="nearby-sub">蛋奶素 ｜ 早午餐 ｜ 台南市東區</div>
+      </div>
+      <div class="nearby-action">
+        <div class="nearby-dist">⭐ 4.6</div>
+        <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="nearby-line" onclick="event.stopPropagation()">💬 LINE</a>
+      </div>
+    </div>
+    <div class="nearby-item" onclick="goLine()">
+      <div class="nearby-num">5</div>
+      <div class="nearby-info">
+        <div class="nearby-name">🫑 新北 · 板橋素食火鍋</div>
+        <div class="nearby-sub">全素 ｜ 火鍋 ｜ 新北市板橋區</div>
+      </div>
+      <div class="nearby-action">
+        <div class="nearby-dist">⭐ 4.5</div>
+        <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="nearby-line" onclick="event.stopPropagation()">💬 LINE</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LINE BANNER -->
+<div class="line-banner">
+  <div class="line-banner-text">
+    <h2>💬 加入「植感生活」LINE社群</h2>
+    <p>立即加入，獲得最新素食餐廳資訊、優惠活動、植物性飲食食譜<br>與全台 50,000+ 素食同好一起交流，共同打造更美好的蔬食生活！</p>
+  </div>
+  <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="line-banner-btn">
+    <span class="line-icon">💬</span> 立即加入LINE社群
+  </a>
+</div>
+
+<!-- ARTICLES / CONTENT -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-title"><div class="dot"></div>素食生活資訊</div>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="view-all">更多文章 →</a>
+  </div>
+  <div class="article-grid">
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="article-card">
+      <div class="article-img">🥗</div>
+      <div class="article-body">
+        <div class="article-cat">飲食指南</div>
+        <div class="article-title">新手入門！素食種類完整解析：全素、蛋奶素、純素有什麼不同？</div>
+        <div class="article-desc">想開始吃素卻搞不清楚各種類型？這篇文章帶你一次搞懂台灣常見的素食分類…</div>
+        <div class="article-link">💬 加入LINE看更多 →</div>
+      </div>
+    </a>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="article-card">
+      <div class="article-img">🌱</div>
+      <div class="article-body">
+        <div class="article-cat">健康飲食</div>
+        <div class="article-title">植物性蛋白質怎麼吃？7種優質素食蛋白質來源推薦</div>
+        <div class="article-desc">吃素不代表蛋白質不足！豆腐、天貝、藜麥…這些食材讓你輕鬆補充每日所需蛋白質…</div>
+        <div class="article-link">💬 加入LINE看更多 →</div>
+      </div>
+    </a>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="article-card">
+      <div class="article-img">🗺️</div>
+      <div class="article-body">
+        <div class="article-cat">餐廳推薦</div>
+        <div class="article-title">2026台北素食餐廳懶人包｜精選20家必吃蔬食好店</div>
+        <div class="article-desc">台北素食選擇超多，但哪些才是真正值得一去的好店？植感生活社群票選出最受歡迎的20家…</div>
+        <div class="article-link">💬 加入LINE看更多 →</div>
+      </div>
+    </a>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="article-card">
+      <div class="article-img">🍳</div>
+      <div class="article-body">
+        <div class="article-cat">食譜分享</div>
+        <div class="article-title">10分鐘快速素食料理！上班族也能輕鬆做的健康便當</div>
+        <div class="article-desc">忙碌的工作日，也能吃得健康又美味。分享5道超簡單的素食便當食譜，讓你省時又省錢…</div>
+        <div class="article-link">💬 加入LINE看更多 →</div>
+      </div>
+    </a>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="article-card">
+      <div class="article-img">🌍</div>
+      <div class="article-body">
+        <div class="article-cat">環境永續</div>
+        <div class="article-title">吃素對地球的影響：植物性飲食如何減少碳排放？</div>
+        <div class="article-desc">每一口蔬食都是對地球的貢獻。科學數據告訴你，植物性飲食如何有效降低個人碳足跡…</div>
+        <div class="article-link">💬 加入LINE看更多 →</div>
+      </div>
+    </a>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="article-card">
+      <div class="article-img">🎉</div>
+      <div class="article-body">
+        <div class="article-cat">活動資訊</div>
+        <div class="article-title">2026素食市集活動整理｜全台蔬食嘉年華懶人包</div>
+        <div class="article-desc">想找素食活動卻不知道從哪裡找？植感生活整理全台最新素食市集與蔬食相關活動資訊…</div>
+        <div class="article-link">💬 加入LINE看更多 →</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- SECOND LINE BANNER -->
+<div class="line-banner" style="background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);">
+  <div class="line-banner-text">
+    <h2>🌿 想讓你的素食餐廳上架？</h2>
+    <p>加入「植感生活」LINE社群，免費提交餐廳資訊<br>讓全台 50,000+ 素食族群找到你的好店！</p>
+  </div>
+  <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="line-banner-btn">
+    <span class="line-icon">💬</span> 免費提交餐廳資訊
+  </a>
+</div>
+
+<!-- MORE RESTAURANT LIST (Nearby by city) -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-title"><div class="dot"></div>🔥 本週人氣餐廳</div>
+    <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="view-all">查看全部 →</a>
+  </div>
+  <div class="card-grid">
+    <div class="restaurant-card" onclick="goLine()">
+      <div class="card-img" style="background:linear-gradient(135deg,#e8f5e9,#66bb6a)">🥬<div class="badge">全素</div></div>
+      <div class="card-body">
+        <div class="card-name">清淨素食廚房</div>
+        <div class="card-meta"><span class="card-tag">中式</span><span class="card-tag">台北市</span></div>
+        <div class="card-info"><span>📍 信義區基隆路</span><br><span>🕐 10:30–20:30</span><span>💰 $100–250</span></div>
+        <div class="card-footer"><div class="card-rating">⭐ 4.6 (198則)</div><a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="card-line-btn" onclick="event.stopPropagation()">💬 LINE</a></div>
+      </div>
+    </div>
+    <div class="restaurant-card" onclick="goLine()">
+      <div class="card-img" style="background:linear-gradient(135deg,#fff3e0,#ffb74d)">🥙<div class="badge badge-orange">蛋奶素</div></div>
+      <div class="card-body">
+        <div class="card-name">地中海蔬食餐廳</div>
+        <div class="card-meta"><span class="card-tag">西式</span><span class="card-tag">台中市</span></div>
+        <div class="card-info"><span>📍 南屯區大墩路</span><br><span>🕐 11:00–21:00</span><span>💰 $280–550</span></div>
+        <div class="card-footer"><div class="card-rating">⭐ 4.8 (156則)</div><a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="card-line-btn" onclick="event.stopPropagation()">💬 LINE</a></div>
+      </div>
+    </div>
+    <div class="restaurant-card" onclick="goLine()">
+      <div class="card-img" style="background:linear-gradient(135deg,#e0f7fa,#4dd0e1)">🍞<div class="badge badge-vegan">純素</div></div>
+      <div class="card-body">
+        <div class="card-name">純素烘焙工坊</div>
+        <div class="card-meta"><span class="card-tag">烘焙</span><span class="card-tag">新竹市</span></div>
+        <div class="card-info"><span>📍 東區光復路</span><br><span>🕐 08:00–18:00</span><span>💰 $60–200</span></div>
+        <div class="card-footer"><div class="card-rating">⭐ 4.9 (89則)</div><a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="card-line-btn" onclick="event.stopPropagation()">💬 LINE</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">🌿 植感生活</div>
+      <p>全台最大素食社群平台<br>收錄 3,200+ 家素食、蔬食、純素餐廳<br>讓每一口都是對自己與地球的善待</p>
+      <div class="footer-line-wrap">
+        <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" class="footer-line-btn">
+          💬 加入LINE社群
+        </a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>找餐廳</h4>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">台北市素食餐廳</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">台中市素食餐廳</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">高雄市素食餐廳</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">台南市素食餐廳</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">地圖搜尋</a>
+    </div>
+    <div class="footer-col">
+      <h4>素食資訊</h4>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">素食種類介紹</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">植物性飲食指南</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">素食食譜</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">素食活動資訊</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">素食超市推薦</a>
+    </div>
+    <div class="footer-col">
+      <h4>關於我們</h4>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">關於植感生活</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">餐廳資訊提交</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">合作洽詢</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">聯絡我們</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank">隱私政策</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 植感生活 版權所有 ｜ 讓蔬食成為生活的一部分 🌿</div>
+    <div>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" style="color:#4a6e4a;margin-right:16px;">LINE社群</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" style="color:#4a6e4a;margin-right:16px;">素食餐廳</a>
+      <a href="https://line.me/ti/p/Zc-3X5mbYE" target="_blank" style="color:#4a6e4a;">聯絡我們</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function goLine() {
+    window.open('https://line.me/ti/p/Zc-3X5mbYE', '_blank');
+  }
+
+  // City tag active toggle
+  document.querySelectorAll('.city-tag').forEach(tag => {
+    tag.addEventListener('click', function() {
+      document.querySelectorAll('.city-tag').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // Category card active toggle
+  document.querySelectorAll('.cat-card').forEach(card => {
+    card.addEventListener('click', function() {
+      document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // Smooth scroll behavior
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
